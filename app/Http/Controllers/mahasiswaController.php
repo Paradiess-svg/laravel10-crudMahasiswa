@@ -15,13 +15,13 @@ class mahasiswaController extends Controller
     public function index(Request $request)
     {
         $katakunci = $request->katakunci;
-        $jumlahbaris = 4 ;
+        $jumlahbaris = 10;
         if(strlen($katakunci)){
             $data = mahasiswa::where('nim','like',"%$katakunci%")->orWhere('nama','like',"%$katakunci%")->orWhere('jurusan','like',"%$katakunci%")->paginate($jumlahbaris);
         }else{
-             $data = mahasiswa::orderBy('nim','desc')->paginate(5);
+             $data = mahasiswa::sortable()->paginate(10);
         }
-       
+
         return view('mahasiswa.index')->with('data',$data);
     }
 
@@ -38,7 +38,7 @@ class mahasiswaController extends Controller
      */
     public function store(Request $request)
     {
-  
+
         FacadesSession::flash('nim',$request->nim);
         FacadesSession::flash('nama',$request->nama);
         FacadesSession::flash('jurusan',$request->jurusan);
@@ -50,13 +50,13 @@ class mahasiswaController extends Controller
         ],[
             'nim.required'=>'NIM wajib diisi',
             'nim.numeric'=>'NIM wajib diisi dalam angka',
-            'nim.unique'=>'NIM sudah ad di dalam database',
+            'nim.unique'=>'NIM sudah ada di dalam database',
             'nama.required'=>'NAMA wajib diisi',
             'jurusan.required'=>'JURUSAN wajib diisi',
         ]);
         $data = [
-            'nim' => $request->nim, 
-            'nama' => $request->nama, 
+            'nim' => $request->nim,
+            'nama' => $request->nama,
             'jurusan' => $request->jurusan];
             mahasiswa::create ($data);
         return redirect()-> to('mahasiswa')->with('success','Berhasil menambahkan data');
@@ -92,7 +92,7 @@ class mahasiswaController extends Controller
             'jurusan.required'=>'JURUSAN wajib diisi',
         ]);
         $data = [
-            'nama' => $request->nama, 
+            'nama' => $request->nama,
             'jurusan' => $request->jurusan];
             mahasiswa::where('nim',$id)->update($data) ;
         return redirect()-> to('mahasiswa')->with('success','Berhasil mengupdate data');
